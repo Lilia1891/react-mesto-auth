@@ -1,5 +1,6 @@
 import React from "react";
 import { Route, Switch } from "react-router-dom";
+import ProtectedRoute from "../ProtectedRoute.js";
 import { useEffect, useState } from "react";
 import Header from "../../components/Header.js";
 import Footer from "../../components/Footer.js";
@@ -128,7 +129,7 @@ function App() {
         <div className="page__container">
           <Header />
           <Switch>
-            <Route exact path="/">
+            <ProtectedRoute exact path="/">
               <Main
                 onEditProfile={onEditProfile}
                 onAddPlace={onAddPlace}
@@ -138,7 +139,7 @@ function App() {
                 onCardDelete={handleCardDelete}
                 cards={cards}
               />
-            </Route>
+            </ProtectedRoute>
             <Route path="/sign-up">
               <Register />
             </Route>
