@@ -19,7 +19,7 @@ const Register = ({ onRegister }) => {
     onRegister({ password, email })
       .then(resetForm)
       .then(() => {
-        history.push("/");
+        history.push("/login");
       })
       .catch((err) => {
         setMessage(err.message || "Что-то пошло не так! Попробуйте еще раз");
@@ -28,13 +28,13 @@ const Register = ({ onRegister }) => {
 
   return (
     <div className="register">
-      <form className="register__form">
-        <h1 className="register__title">Регистрация</h1>
+      <form className="register__form popup-container" onSubmit={handleSubmit}>
+        <h1 className="register__title popup__title">Регистрация</h1>
         <input
           id="email"
           value={email}
           type="email"
-          className="register__input"
+          className="register__input popup__input"
           placeholder="Email"
           onChange={(e) => setEmail(e.target.value)}
         />
@@ -42,11 +42,11 @@ const Register = ({ onRegister }) => {
           id="password"
           value={password}
           type="password"
-          className="register__input"
+          className="register__input popup__input"
           placeholder="Пароль"
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button type="submit" className="register__btn">
+        <button type="submit" className="register__btn popup__submit-button">
           Зарегистрироваться
         </button>
       </form>

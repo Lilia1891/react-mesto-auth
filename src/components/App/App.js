@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Switch } from "react-router-dom";
+import { Route, Switch, Redirect, useHistory } from "react-router-dom";
 import ProtectedRoute from "../ProtectedRoute.js";
 import { useEffect, useState } from "react";
 import Header from "../../components/Header.js";
@@ -14,14 +14,70 @@ import EditAvatarPopup from "../EditAvatarPopup.js";
 import AddPlacePopup from "../AddPlacePopup.js";
 import Register from "../Register";
 import Login from "../Login";
+import * as mestoAuth from "../../mestoAuth";
 
-function App() {
+const App = () => {
   const [isEditAvatarPopupOpen, handleEditAvatarClick] = useState(false);
   const [isEditProfilePopupOpen, handleEditProfileClick] = useState(false);
   const [isAddPlacePopupOpen, handleAddPlaceClick] = useState(false);
   const [selectedCard, handleCardClick] = useState({});
   const [currentUser, setCurrentUser] = useState({});
   const [cards, setCards] = useState([]);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [userData, setUserData] = useState({});
+  const history = useHistory();
+  const handleLogin = () => {
+    setLoggedIn(true);
+  };
+  const onLogin = ({ email, password }) => {
+    return mestoAuth.authorize(email, password).then((data) => {
+      if (!data) {
+        //setMessage("Что-то пошло не так");
+      }
+      if (data.jwt) {
+        setLoggedIn(true);
+        localStorage.setItem("jwt", data.jwt);
+      }
+    });
+  };
+
+  const onRegister = ({ email, password }) => {
+    return mestoAuth.register(email, password).then((res) => {
+      if (!res || res.statusCode === 400) {
+        throw new Error("Что-то пошло не так");
+      } else {
+        if (res.jwt) {
+          setLoggedIn(true);
+          localStorage.setItem("jwt", res.jwt);
+        }
+      }
+    });
+  };
+
+  const auth = async (jwt) => {
+    mestoAuth.getContent(jwt).then((res) => {
+      if (res) {
+        setLoggedIn(true);
+        setUserData({
+          email: res.email,
+          password: res.password,
+        });
+      }
+    });
+  };
+
+  useEffect(() => {
+    let jwt = localStorage.getItem("jwt");
+    if (jwt) {
+      auth(jwt);
+    }
+  }, [loggedIn]);
+
+  useEffect(() => {
+    if (loggedIn) {
+      history.push("/");
+    }
+  }, [history, loggedIn]);
 
   const closeAllPopups = () => {
     handleEditAvatarClick(false);
@@ -129,22 +185,20 @@ function App() {
         <div className="page__container">
           <Header />
           <Switch>
-            <ProtectedRoute exact path="/">
-              <Main
-                onEditProfile={onEditProfile}
-                onAddPlace={onAddPlace}
-                onEditAvatar={onEditAvatar}
-                onCardClick={onCardClick}
-                onCardLike={handleCardLike}
-                onCardDelete={handleCardDelete}
-                cards={cards}
-              />
-            </ProtectedRoute>
             <Route path="/sign-up">
-              <Register />
+              <Register onRegister={onRegister} />
             </Route>
             <Route path="/sign-in">
-              <Login />
+              <Login onLogin={onLogin} />
+            </Route>
+            <ProtectedRoute
+              path="/"
+              loggedIn={loggedIn}
+              userData={userData}
+              component={Main}
+            ></ProtectedRoute>
+            <Route>
+              {loggedIn ? <Redirect to="/" /> : <Redirect to="/login" />}
             </Route>
           </Switch>
           <Footer />
@@ -177,6 +231,6 @@ function App() {
       </CurrentUserContext.Provider>
     </div>
   );
-}
+};
 
 export default App;
