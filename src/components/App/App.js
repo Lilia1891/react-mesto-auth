@@ -16,7 +16,7 @@ import Register from "../Register";
 import Login from "../Login";
 import * as mestoAuth from "../../mestoAuth";
 
-const App = () => {
+function App() {
   const [isEditAvatarPopupOpen, handleEditAvatarClick] = useState(false);
   const [isEditProfilePopupOpen, handleEditProfileClick] = useState(false);
   const [isAddPlacePopupOpen, handleAddPlaceClick] = useState(false);
@@ -189,19 +189,31 @@ const App = () => {
               <Register onRegister={onRegister} />
             </Route>
             <Route path="/sign-in">
-              <Login onLogin={onLogin} />
+              <Login onLogin={onLogin} handleLogin={handleLogin} />
             </Route>
             <ProtectedRoute
-              path="/"
+              path="/react-mesto-auth"
               loggedIn={loggedIn}
               userData={userData}
               component={Main}
+              onEditProfile={onEditProfile}
+              onAddPlace={onAddPlace}
+              onEditAvatar={onEditAvatar}
+              onCardClick={onCardClick}
+              onCardLike={handleCardLike}
+              onCardDelete={handleCardDelete}
+              cards={cards}
             ></ProtectedRoute>
-            <Route>
-              {loggedIn ? <Redirect to="/" /> : <Redirect to="/login" />}
+            <Route path="*">
+              {loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}
             </Route>
           </Switch>
-          <Footer />
+          <Route
+            render={({ location }) =>
+              location.pathname !== "/sign-up" &&
+              location.pathname !== "/sign-in" && <Footer />
+            }
+          />
           <EditAvatarPopup
             isOpen={isEditAvatarPopupOpen}
             onClose={closeAllPopups}
@@ -231,6 +243,6 @@ const App = () => {
       </CurrentUserContext.Provider>
     </div>
   );
-};
+}
 
 export default App;

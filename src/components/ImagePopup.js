@@ -1,9 +1,10 @@
+import React from "react";
+
 function ImagePopup({ card, onClose }) {
   return (
     <div
-      className={`popup popup_view-image popup_dark ${
-        card.link && "popup_opened"
-      }`}
+      className={`popup popup_view-image popup_dark ${card.link &&
+        "popup_opened"}`}
     >
       <figure className="popup__figure">
         <img className="popup__image" src={card.link} alt={card.name} />

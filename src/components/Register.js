@@ -19,7 +19,7 @@ const Register = ({ onRegister }) => {
     onRegister({ password, email })
       .then(resetForm)
       .then(() => {
-        history.push("/login");
+        history.push("/sign-in");
       })
       .catch((err) => {
         setMessage(err.message || "Что-то пошло не так! Попробуйте еще раз");
@@ -28,13 +28,16 @@ const Register = ({ onRegister }) => {
 
   return (
     <div className="register">
-      <form className="register__form popup-container" onSubmit={handleSubmit}>
-        <h1 className="register__title popup__title">Регистрация</h1>
+      <form
+        className="popup__container popup__container_sign"
+        onSubmit={handleSubmit}
+      >
+        <h1 className="popup__title popup__title_sign">Регистрация</h1>
         <input
           id="email"
           value={email}
           type="email"
-          className="register__input popup__input"
+          className="popup__input popup__input_sign"
           placeholder="Email"
           onChange={(e) => setEmail(e.target.value)}
         />
@@ -42,19 +45,22 @@ const Register = ({ onRegister }) => {
           id="password"
           value={password}
           type="password"
-          className="register__input popup__input"
+          className="popup__input popup__input_sign"
           placeholder="Пароль"
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button type="submit" className="register__btn popup__submit-button">
+        <button
+          type="submit"
+          className="popup__submit-button popup__submit-button_sign"
+        >
           Зарегистрироваться
         </button>
+        <div className="register__signin">
+          <Link to="/sign-in" className="register__signin">
+            Уже зарегистрированы? Войти
+          </Link>
+        </div>
       </form>
-      <div className="register__signin">
-        <Link to="/sign-in" className="register__sign-in-link">
-          Уже зарегистрированы? Войти
-        </Link>
-      </div>
     </div>
   );
 };
