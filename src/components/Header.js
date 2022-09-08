@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../images/header__logo.svg";
 
-function Header({ userData }) {
+function Header({ userData, onClick }) {
   const { pathname } = useLocation();
   return (
     <header className="header">
@@ -21,9 +21,9 @@ function Header({ userData }) {
       {pathname === "/" && (
         <div className="header__user-info">
           <p className="header__user-email">{userData.email}</p>
-          <Link to="/sign-in" className="header__link header__link_grey">
+          <button onClick={onClick} className="header__link header__link_grey">
             Выйти
-          </Link>
+          </button>
         </div>
       )}
     </header>

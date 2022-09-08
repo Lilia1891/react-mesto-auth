@@ -71,18 +71,22 @@ function App() {
     });
   };
 
-  useEffect(() => {
-    let jwt = localStorage.getItem("jwt");
-    if (jwt) {
-      auth(jwt);
-    }
-  }, [loggedIn]);
+  const jwt = localStorage.getItem("jwt");
+  if (jwt) {
+    auth(jwt);
+  }
 
   useEffect(() => {
     if (loggedIn) {
       history.push("/");
     }
   }, [history, loggedIn]);
+
+  const handleSignOut = () => {
+    localStorage.removeItem("jwt");
+    setLoggedIn(false);
+    history.push("/sign-in");
+  };
 
   const closeAllPopups = () => {
     handleEditAvatarClick(false);
@@ -189,7 +193,7 @@ function App() {
     <div className="page">
       <CurrentUserContext.Provider value={currentUser}>
         <div className="page__container">
-          <Header userData={userData} />
+          <Header userData={userData} onClick={handleSignOut} />
           <Switch>
             <Route path="/sign-up">
               <Register onRegister={onRegister} />
