@@ -12,7 +12,6 @@ function Main({
   onCardDelete,
 }) {
   const currentUser = React.useContext(CurrentUserContext);
-  console.log(123);
   return (
     <>
       <div className="profile">
@@ -46,7 +45,7 @@ function Main({
           {cards.map((item, id) => (
             <Card
               data={item}
-              key={id}
+              key={item._id}
               onCardClick={onCardClick}
               onCardLike={onCardLike}
               onCardDelete={onCardDelete}
