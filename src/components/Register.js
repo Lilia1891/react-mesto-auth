@@ -1,18 +1,13 @@
 import React, { useState } from "react";
 import { Link, useHistory, withRouter } from "react-router-dom";
 
-//import * as auth from '../Auth.js';
-//import './styles/Register.css';
-
 const Register = ({ onRegister }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
   const history = useHistory();
   const resetForm = () => {
     setEmail("");
     setPassword("");
-    setMessage("");
   };
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -22,12 +17,12 @@ const Register = ({ onRegister }) => {
         history.push("/sign-in");
       })
       .catch((err) => {
-        setMessage(err.message || "Что-то пошло не так! Попробуйте еще раз");
+        console.log(err);
       });
   };
 
   return (
-    <div className="register">
+    <div className="sign">
       <form
         className="popup__container popup__container_sign"
         onSubmit={handleSubmit}
@@ -37,6 +32,7 @@ const Register = ({ onRegister }) => {
           id="email"
           value={email}
           type="email"
+          name="email"
           className="popup__input popup__input_sign"
           placeholder="Email"
           onChange={(e) => setEmail(e.target.value)}
@@ -45,7 +41,9 @@ const Register = ({ onRegister }) => {
           id="password"
           value={password}
           type="password"
+          name="password"
           className="popup__input popup__input_sign"
+          autoComplete="on"
           placeholder="Пароль"
           onChange={(e) => setPassword(e.target.value)}
         />

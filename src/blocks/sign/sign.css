@@ -1,11 +1,7 @@
-.register {
+.sign {
   display: flex;
-  position: fixed;
-  left: 0%;
-  top: 0%;
+  flex-direction: column;
   background-color: rgba(0, 0, 0, 0.5);
-  width: 100%;
-  height: 100%;
   align-items: center;
   justify-content: center;
 }

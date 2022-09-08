@@ -7,6 +7,7 @@ import Footer from "../../components/Footer.js";
 import Main from "../../components/Main.js";
 import PopupWithForm from "../../components/PopupWithForm.js";
 import ImagePopup from "../../components/ImagePopup.js";
+import InfoTooltip from "../InfoTooltip.js";
 import api from "../../utils/Api.js";
 import { CurrentUserContext } from "../../contexts/CurrentUserContext.js";
 import EditProfilePopup from "../EditProfilePopup.js";
@@ -15,6 +16,8 @@ import AddPlacePopup from "../AddPlacePopup.js";
 import Register from "../Register";
 import Login from "../Login";
 import * as mestoAuth from "../../mestoAuth";
+import success from "../../success.png";
+import fail from "../../fail.png";
 
 function App() {
   const [isEditAvatarPopupOpen, handleEditAvatarClick] = useState(false);
@@ -25,30 +28,33 @@ function App() {
   const [cards, setCards] = useState([]);
   const [loggedIn, setLoggedIn] = useState(false);
   const [userData, setUserData] = useState({});
+  const [isInfoTooltipSuccessOpen, setInfoTooltipSuccessOpen] = useState(false);
+  const [isInfoTooltipFailOpen, setInfoTooltipFailOpen] = useState(false);
   const history = useHistory();
-  const handleLogin = () => {
-    setLoggedIn(true);
-  };
+
   const onLogin = ({ email, password }) => {
-    return mestoAuth.authorize(email, password).then((data) => {
-      if (!data) {
-        //setMessage("Что-то пошло не так");
-      }
-      if (data.jwt) {
-        setLoggedIn(true);
-        localStorage.setItem("jwt", data.jwt);
-      }
-    });
+    return mestoAuth
+      .authorize(email, password)
+      .then((data) => {
+        if (data.token) {
+          setLoggedIn(true);
+          localStorage.setItem("jwt", data.token);
+        }
+      })
+      .catch((err) => {
+        setInfoTooltipFailOpen(true);
+        console.log(err);
+      });
   };
 
   const onRegister = ({ email, password }) => {
     return mestoAuth.register(email, password).then((res) => {
       if (!res || res.statusCode === 400) {
+        setInfoTooltipFailOpen(true);
         throw new Error("Что-то пошло не так");
       } else {
-        if (res.jwt) {
-          setLoggedIn(true);
-          localStorage.setItem("jwt", res.jwt);
+        if (res) {
+          setInfoTooltipSuccessOpen(true);
         }
       }
     });
@@ -59,8 +65,7 @@ function App() {
       if (res) {
         setLoggedIn(true);
         setUserData({
-          email: res.email,
-          password: res.password,
+          email: res.data.email,
         });
       }
     });
@@ -84,6 +89,8 @@ function App() {
     handleEditProfileClick(false);
     handleAddPlaceClick(false);
     handleCardClick({});
+    setInfoTooltipSuccessOpen(false);
+    setInfoTooltipFailOpen(false);
   };
   const onEditAvatar = () => {
     handleEditAvatarClick(true);
@@ -178,21 +185,21 @@ function App() {
         console.log(err);
       });
   }, []);
-
   return (
     <div className="page">
       <CurrentUserContext.Provider value={currentUser}>
         <div className="page__container">
-          <Header />
+          <Header userData={userData} />
           <Switch>
             <Route path="/sign-up">
               <Register onRegister={onRegister} />
             </Route>
             <Route path="/sign-in">
-              <Login onLogin={onLogin} handleLogin={handleLogin} />
+              <Login onLogin={onLogin} />
             </Route>
             <ProtectedRoute
-              path="/react-mesto-auth"
+              exact
+              path="/"
               loggedIn={loggedIn}
               userData={userData}
               component={Main}
@@ -239,6 +246,20 @@ function App() {
           </PopupWithForm>
 
           <ImagePopup card={selectedCard} onClose={closeAllPopups} />
+
+          <InfoTooltip
+            onClose={closeAllPopups}
+            isOpen={isInfoTooltipSuccessOpen}
+          >
+            <img className="popup__info-image" src={success} alt="success" />
+            <p className="popup__info-title">Вы успешно зарегистрировались!</p>
+          </InfoTooltip>
+          <InfoTooltip onClose={closeAllPopups} isOpen={isInfoTooltipFailOpen}>
+            <img className="popup__info-image" src={fail} alt="fail" />
+            <p className="popup__info-title">
+              Что-то пошло не так! Попробуйте ещё раз.
+            </p>
+          </InfoTooltip>
         </div>
       </CurrentUserContext.Provider>
     </div>

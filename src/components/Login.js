@@ -4,12 +4,10 @@ import { useHistory, withRouter } from "react-router-dom";
 const Login = ({ onLogin }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
   const history = useHistory();
   const resetForm = () => {
     setEmail("");
     setPassword("");
-    setMessage("");
   };
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -22,12 +20,12 @@ const Login = ({ onLogin }) => {
         history.push("/");
       })
       .catch((err) => {
-        setMessage(err.message || "Что-то пошло не так! Попробуйте еще раз");
+        console.log(err);
       });
   };
 
   return (
-    <div className="login" onSubmit={handleSubmit}>
+    <div className="sign" onSubmit={handleSubmit}>
       <form className="popup__container popup__container_sign">
         <h1 className="popup__title popup__title_sign">Вход</h1>
         <input
@@ -43,6 +41,7 @@ const Login = ({ onLogin }) => {
           value={password}
           type="password"
           className="popup__input popup__input_sign"
+          autoComplete="on"
           placeholder="Пароль"
           onChange={(e) => setPassword(e.target.value)}
         />

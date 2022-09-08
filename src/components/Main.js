@@ -12,7 +12,7 @@ function Main({
   onCardDelete,
 }) {
   const currentUser = React.useContext(CurrentUserContext);
-
+  console.log(123);
   return (
     <>
       <div className="profile">
