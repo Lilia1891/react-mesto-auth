@@ -30,13 +30,15 @@ function App() {
   const [isRegistred, setIsRegistred] = useState(false);
   const history = useHistory();
 
-  const onLogin = ({ email, password }) => {
+  const onLogin = ({ email, password, resetForm }) => {
     return mestoAuth
       .authorize(email, password)
       .then((data) => {
         if (data.token) {
           setLoggedIn(true);
           localStorage.setItem("jwt", data.token);
+          history.push("/");
+          resetForm();
         }
       })
       .catch((err) => {

@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { useHistory, withRouter } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 
 const Login = ({ onLogin }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const history = useHistory();
+
   const resetForm = () => {
     setEmail("");
     setPassword("");
@@ -14,14 +14,7 @@ const Login = ({ onLogin }) => {
     if (!email || !password) {
       return;
     }
-    onLogin({ email, password })
-      .then(resetForm)
-      .then(() => {
-        history.push("/");
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    onLogin({ email, password, resetForm });
   };
 
   return (
