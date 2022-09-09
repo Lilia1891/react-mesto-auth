@@ -1,24 +1,16 @@
 import React, { useState } from "react";
-import { Link, useHistory, withRouter } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 
 const Register = ({ onRegister }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const history = useHistory();
   const resetForm = () => {
     setEmail("");
     setPassword("");
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    onRegister({ password, email })
-      .then(resetForm)
-      .then(() => {
-        history.push("/sign-in");
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    onRegister({ password, email, resetForm });
   };
 
   return (

@@ -46,16 +46,17 @@ function App() {
       });
   };
 
-  const onRegister = ({ email, password }) => {
+  const onRegister = ({ email, password, resetForm }) => {
     return mestoAuth.register(email, password).then((res) => {
       if (!res || res.statusCode === 400) {
         setIsRegistred(false);
         setInfoTooltipOpen(true);
-        throw new Error("Что-то пошло не так");
       } else {
         if (res) {
           setIsRegistred(true);
           setInfoTooltipOpen(true);
+          history.push("/sign-in");
+          resetForm();
         }
       }
     });
