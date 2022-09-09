@@ -16,8 +16,6 @@ import AddPlacePopup from "../AddPlacePopup.js";
 import Register from "../Register";
 import Login from "../Login";
 import * as mestoAuth from "../../mestoAuth";
-import success from "../../success.png";
-import fail from "../../fail.png";
 
 function App() {
   const [isEditAvatarPopupOpen, handleEditAvatarClick] = useState(false);
@@ -28,8 +26,8 @@ function App() {
   const [cards, setCards] = useState([]);
   const [loggedIn, setLoggedIn] = useState(false);
   const [userData, setUserData] = useState({});
-  const [isInfoTooltipSuccessOpen, setInfoTooltipSuccessOpen] = useState(false);
-  const [isInfoTooltipFailOpen, setInfoTooltipFailOpen] = useState(false);
+  const [isInfoTooltipOpen, setInfoTooltipOpen] = useState(false);
+  const [isRegistred, setIsRegistred] = useState(false);
   const history = useHistory();
 
   const onLogin = ({ email, password }) => {
@@ -42,7 +40,6 @@ function App() {
         }
       })
       .catch((err) => {
-        setInfoTooltipFailOpen(true);
         console.log(err);
       });
   };
@@ -50,11 +47,13 @@ function App() {
   const onRegister = ({ email, password }) => {
     return mestoAuth.register(email, password).then((res) => {
       if (!res || res.statusCode === 400) {
-        setInfoTooltipFailOpen(true);
+        setIsRegistred(false);
+        setInfoTooltipOpen(true);
         throw new Error("Что-то пошло не так");
       } else {
         if (res) {
-          setInfoTooltipSuccessOpen(true);
+          setIsRegistred(true);
+          setInfoTooltipOpen(true);
         }
       }
     });
@@ -93,8 +92,7 @@ function App() {
     handleEditProfileClick(false);
     handleAddPlaceClick(false);
     handleCardClick({});
-    setInfoTooltipSuccessOpen(false);
-    setInfoTooltipFailOpen(false);
+    setInfoTooltipOpen(false);
   };
   const onEditAvatar = () => {
     handleEditAvatarClick(true);
@@ -253,17 +251,9 @@ function App() {
 
           <InfoTooltip
             onClose={closeAllPopups}
-            isOpen={isInfoTooltipSuccessOpen}
-          >
-            <img className="popup__info-image" src={success} alt="success" />
-            <p className="popup__info-title">Вы успешно зарегистрировались!</p>
-          </InfoTooltip>
-          <InfoTooltip onClose={closeAllPopups} isOpen={isInfoTooltipFailOpen}>
-            <img className="popup__info-image" src={fail} alt="fail" />
-            <p className="popup__info-title">
-              Что-то пошло не так! Попробуйте ещё раз.
-            </p>
-          </InfoTooltip>
+            isOpen={isInfoTooltipOpen}
+            isRegistred={isRegistred}
+          ></InfoTooltip>
         </div>
       </CurrentUserContext.Provider>
     </div>
