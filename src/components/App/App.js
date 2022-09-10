@@ -34,10 +34,9 @@ function App() {
     return mestoAuth
       .authorize(email, password)
       .then((data) => {
-        if (data.token) {
-          setLoggedIn(true);
+        if (data && data.token) {
           localStorage.setItem("jwt", data.token);
-          history.push("/");
+          auth(data.token);
           resetForm();
         }
       })
@@ -73,21 +72,24 @@ function App() {
     });
   };
 
-  const jwt = localStorage.getItem("jwt");
-  if (jwt) {
-    auth(jwt);
-  }
+  useEffect(() => {
+    const jwt = localStorage.getItem("jwt");
+    if (jwt) {
+      auth(jwt);
+    }
+  }, []);
 
   useEffect(() => {
     if (loggedIn) {
       history.push("/");
+    } else {
+      history.push("/sign-in");
     }
-  }, [history, loggedIn]);
+  }, [loggedIn]);
 
   const handleSignOut = () => {
     localStorage.removeItem("jwt");
     setLoggedIn(false);
-    history.push("/sign-in");
   };
 
   const closeAllPopups = () => {
